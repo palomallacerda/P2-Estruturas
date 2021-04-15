@@ -1,27 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
-/*nivel não está balanceando assim que pega o novo elemento da arvore*/
-/*tentar inserir o nivel na função de inserir*/
+#define COUNT 10
+// COMPILE O CÓDIGO ABAIXO USANDO O GCC
+// INSIRA ELEMENTOS NA ARVORE, QUANDO ESTIVER DESBALANCEADO A CORREÇÃO SERÁ FEITA AUTOMATICAMENTE
 typedef struct tree{
     int elemento, h;
     struct tree *left;
     struct tree *right;
 }tree;
 
-void display(tree *raiz) /*pós ordem*/
-{
-    if (raiz == NULL)
-    {
-        printf("(NULL)");
-    }
-    else   
-    {   
-        printf("(");
-        printf("%d, ", raiz->elemento);
-        display(raiz->left);
-        printf(",");
-        display(raiz->right);
-        printf(")");
+void display(tree *raiz, int space) /*está imprimindo em 2d*/
+{   
+    if (raiz == NULL) return;
+    else{
+       
+        space += COUNT;
+        display(raiz->right, space);
+        printf("\n");
+        for (int i = COUNT; i < space; i++)
+           printf(" ");
+
+        printf("%d\n", raiz->elemento);
+        display(raiz->left, space);
+       
     }
 }
 
@@ -33,7 +34,7 @@ int nivel(tree *raiz, int e, int d)
     }
     else
     {
-        e = 1+nivel(raiz->left, e, d);
+        e = 1+ nivel(raiz->left, e, d);
         d = 1 + nivel(raiz->right, e, d);
         if (e > d)
         {
@@ -82,7 +83,7 @@ tree *inserir(tree *raiz, int elem)
         raiz = (tree*) malloc(sizeof(tree));
         raiz->elemento = elem;
         raiz->right = NULL;
-        raiz->right = NULL;      
+        raiz->left = NULL;      
         return raiz;
     }
     else{
@@ -97,80 +98,71 @@ tree *inserir(tree *raiz, int elem)
     }
 }
 
-
-int main()
+void menu()
 {
     tree *raiz = NULL, *aux;
     int i = 0, number;
+    printf("Insira o elemento -> ");
     while (scanf("%d", &number)!= EOF )
     { 
         raiz= inserir(raiz, number);
+        puts("Inserindo.....");
         puts("Sua arvore atual");
-        display(raiz);
-        puts("");
-
+        printf("#-----------------------------#\n");
+        display(raiz, 0);
+        printf("#-----------------------------#\n");
+        
         int n_left = nivel(raiz->left, -1, -1)+1;
-        printf("Nível esquerda: %d\n", n_left);
-        int n_right = nivel(raiz->right, -1, -1) +1;
-        printf("Nível direita: %d\n", n_right);
-        int fb = fator_balanceamento(n_right, n_left, raiz);
-        printf("balanced factor:%d\n", fb);
+        int n_right = nivel(raiz->right, -1, -1)+1;
+        int fb = fator_balanceamento(n_left, n_right, raiz);
 
         if(fb == 2 || fb == -2) /*vai ta desbalanceada*/
         { 
             printf("Precisa de balanceamento...\n");
+          
+    		if(fb == 2) /*esquerda desbalanceada*/
+            {       
+                aux = raiz->left;
+                int n_left_aux = nivel(aux->left, -1, -1);
+                int n_right_aux = nivel(aux->right, -1, -1);
+                int fb_aux = fator_balanceamento(n_left_aux, n_right_aux, aux);
+              
+                if(fb_aux == -1) {
+                    raiz->left = r_left(aux);
+                }
+
+                raiz = r_right(raiz);
+                i= 1;
             
-    		if(fb == 2) /*direita desbalanceada*/
-            {   
+            } 
+            else if(fb == -2) /*direita desbalanceada*/
+            {
                 aux = raiz->right;
                 int n_left_aux = nivel(aux->left, -1, -1);
-                printf("aux-> %d\n", aux->elemento);
-                printf("aux esquerda-> %d\n", n_left_aux);
                 int n_right_aux = nivel(aux->right, -1, -1);
-                printf("aux direita-> %d\n", n_right_aux);
+                int fb_aux = fator_balanceamento(n_left_aux, n_right_aux, aux);
 
-                int fb_aux = fator_balanceamento(n_right_aux, n_left_aux, aux);
-                printf("fb_aux-> %d\n", fb_aux);
                 if(fb_aux == 1) {
                     raiz->right = r_right(aux);
-                }
-                else if (fb_aux = -1)
-                {
-                    raiz->right = r_left(aux);
                 }
 
                 raiz = r_left(raiz);
                 i= 1;
-            
-        	  i= 1;
-            } 
-            else if(fb == -2) /*esquerda desbalanceada*/
-            {
-                aux = raiz->left;
-                int n_left_aux = nivel(aux->left, -1, -1);
-                int n_right_aux = nivel(aux->right, -1, -1);
-                int fb_aux = fator_balanceamento(n_right_aux, n_left_aux, aux);
-                
-                if(fb_aux == 1) {
-                    raiz->left = r_left(aux);
-                }
-                else if (fb_aux = -1)
-                {
-                    raiz->right = r_right(aux);
-                }
-                raiz = r_right(raiz);
-                i= 1;
             }
+        }
         if (i != 0)
         { 
-            puts("Balanceada");
-            display(raiz);
-            puts("");
+            printf("#-----------BALANCEADA----------#\n");
+            display(raiz, 0);
+            printf("#-----------------------------#\n");
             break;
         }
     
     }
 }
-     
+
+int main()
+{
+    menu();
     return 0;
 }
