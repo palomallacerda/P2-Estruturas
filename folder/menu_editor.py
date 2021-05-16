@@ -19,6 +19,7 @@ class EquacaoFrame(wx.Frame):
         #criando uma barra de menu#
         self.makeMenuBar()
 
+        
         #criando uma barra de status#
         self.CreateStatusBar()
         self.SetStatusText("Trabalho realizado pelos alunos do IC UFAL")
