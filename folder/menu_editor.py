@@ -19,7 +19,6 @@ class equacaoFrame(wx.Frame):
         #Mudando o Icone
         self.InitIcone()
 
-
     #Mudando o icone da tela  
     def InitIcone(self):    
         self.icon =wx.Icon(wx.Bitmap("C:/Users/Paloma lacerda/Documents/estruturas/Ab2/Icones/alpha.png"))#path to icon
