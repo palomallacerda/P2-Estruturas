@@ -1,45 +1,10 @@
-#coding: utf-8
-from sys import flags
 import wx
-from wx.core import CLOSE, CloseEvent, DC, DefaultPosition, DefaultSize, EVT_MENU, FileDialog, LIGHT_GREY, LIGHT_GREY_BRUSH, Position, RED, SaveFileSelector
+from wx.core import LIGHT_GREY
 
-class EquacaoFrame(wx.Frame):
-    def __init__(self, *args, **kw):
-        super(EquacaoFrame, self).__init__(*args, **kw)
-        tela = wx.Panel(self)
-        vbox = wx.BoxSizer(wx.VERTICAL) 
+class equacaoFrame(wx.Frame):
 
-        st = wx.StaticText(tela, label="Crie sua equação abaixo")
-        font = st.GetFont()
-        font.PointSize+=4
-        font = font.Italic() 
-        st.SetFont(font)
-        tela.SetBackgroundColour(LIGHT_GREY)
-        
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(st, wx.SizerFlags().Border(wx.TOP|wx.LEFT, 15))
-        tela.SetSizer(sizer)
-        
-
-        #criando botões
-        #bottom_1= wx.BoxSizer(wx.HORIZONTAL)
-        #bottom_1.Add(wx.Button(self, -1,"Botao" ), 0, wx.ALIGN_CENTER, 0)
-        #self.SetSizer(bottom_1)#
-
-
-
-        #criando caixa de texto#
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        l1 = wx.StaticText(tela,-1, label ="Escreva sua equação aqui:")
-        hbox.Add(l1,0, wx.EXPAND| wx.ALIGN_LEFT| wx.ALL, 30)
-        
-        
-        
-        self.t1 = wx.TextCtrl(tela,-1, size=(200,100), style = wx.TE_MULTILINE)
-        hbox.Add(self.t1, 1, wx.EXPAND|wx.ALIGN_LEFT|wx.Left,10)
-        vbox.Add(hbox) 
-        tela.SetSizer(vbox) 
-
+    def __init__(self, parent, title):
+        super(equacaoFrame, self).__init__(parent, title=title)
         
         #criando uma barra de menu#
         self.makeMenuBar()
@@ -47,7 +12,10 @@ class EquacaoFrame(wx.Frame):
         #criando uma barra de status#
         self.CreateStatusBar()
         self.SetStatusText("Trabalho realizado pelos alunos do IC UFAL")
-    
+
+        #criando entrada
+        self.InitEntrada()
+
 
     def makeMenuBar(self):
         fileMenu = wx.Menu()
@@ -61,7 +29,7 @@ class EquacaoFrame(wx.Frame):
         openitem = fileMenu.Append(wx.ID_OPEN)
         
         fileMenu.AppendSeparator()
-        exitItem = fileMenu.Append(wx.ID_EXIT, "&Exit\tCtrl+X")
+        exitItem = fileMenu.Append(wx.ID_EXIT)
         
 
 
@@ -81,9 +49,11 @@ class EquacaoFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.Onexit,  exitItem)
         self.Bind(wx.EVT_MENU, self.Onsobre, aboutItem)
         self.Bind(wx.EVT_MENU, self.Onopen, openitem)
-    
+
+    #ações do Menu 
     def Onsave(self, event):
        wx.MessageBox("salvar aquivo")
+
     def Onsaveas(self, event):
      with wx.FileDialog(self,"Save as XYZ file", wildcard="xyz files (*.xyz)|*.xyz",
                         style=wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT) as fileDialog:
@@ -95,6 +65,7 @@ class EquacaoFrame(wx.Frame):
                 self.doSaveData(file)
         except IOError:
             wx.LogError("Cannot save current data in file '%s'." % pathname)
+   
     def Onexit(self, event):
         self.Close(True)
     def Onsobre(self, event):       
@@ -102,9 +73,46 @@ class EquacaoFrame(wx.Frame):
     def Onopen(self, event):
         wx.FileSelector("Escolha um arquivo")
 
-if __name__ == '__main__':
+    def InitEntrada(self):
+
+        Tela = wx.Panel(self)
+        sizer = wx.GridBagSizer(4, 4)
+
+        text = wx.StaticText(Tela, label="Digite sua equação abaixo:")
+        sizer.Add(text, pos=(0, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=5)
+
+        tc = wx.TextCtrl(Tela)
+        sizer.Add(tc, pos=(1, 0), span=(1, 5),
+            flag=wx.EXPAND|wx.LEFT|wx.RIGHT, border=5)
+
+        buttonsend = wx.Button(Tela, label="Enviar", size=(90, 28))
+        buttonClear = wx.Button(Tela, label="Limpar", size=(90, 28))
+        sizer.Add(buttonsend, pos=(2, 2))
+        sizer.Add(buttonClear, pos=(2, 3), flag=wx.RIGHT|wx.Right, border=10)
+
+
+        #definindo cor de background
+        Tela.SetBackgroundColour(LIGHT_GREY)
+        Tela.SetSizer(sizer)
+
+        #criando linha de separação
+        line = wx.StaticLine(Tela)
+        sizer.Add(line, pos=(3,0), span=(1,5), 
+                flag = wx.EXPAND|wx.BOTTOM, border = 10)
+
+        #pra a entrada se encaixar na tela
+        sizer.AddGrowableCol(1)
+        sizer.AddGrowableRow(2)
+
+
+
+def main():
+
     app = wx.App()
-    frm = EquacaoFrame(None, title='Equation Editor')
-    frm.Show()
+    ex = equacaoFrame(None, title='Editor de equação')
+    ex.Show()
     app.MainLoop()
 
+
+if __name__ == '__main__':
+    main()
