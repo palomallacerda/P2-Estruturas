@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "header.h"
-#Se quiser acesso ao header.h é necssário solicitar 
 
 int main(){
     fila *novo = start();
