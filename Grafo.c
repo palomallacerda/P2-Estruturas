@@ -1,6 +1,7 @@
-/*implementação de grafo usando uma lista adjacente*/
+/*Aqui irei fazer a implementação de grafo usando uma lista adjacente*/
 #include<stdio.h>
 #include <stdlib.h>
+
 
 typedef struct adjacente{
     int peso;
